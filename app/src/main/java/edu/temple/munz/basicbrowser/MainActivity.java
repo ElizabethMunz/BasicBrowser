@@ -96,7 +96,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //change the current view in the viewPager
-                viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+                //viewPager.setCurrentItem(viewPager.getCurrentItem() - 1); THIS IS FOR SWITCHING TABS
+
+                //if the webView object has a back history, go back
+                if(((WebViewFragment)fspa.getItem(viewPager.getCurrentItem())).webView.canGoBack()) {
+                    ((WebViewFragment)fspa.getItem(viewPager.getCurrentItem())).webView.goBack();
+                }
             }
         });
 
@@ -105,7 +110,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //change the current view in the viewPager
-                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                //viewPager.setCurrentItem(viewPager.getCurrentItem() + 1); THIS IS FOR SWITCHING TABS
+                if(((WebViewFragment)fspa.getItem(viewPager.getCurrentItem())).webView.canGoForward()) {
+                    ((WebViewFragment)fspa.getItem(viewPager.getCurrentItem())).webView.goForward();
+                }
             }
         });
     }
@@ -115,16 +123,19 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(Message message) {
             Log.d("msg", "handleMessage called successfully");
-            //Create a new WebViewFragment for the site, and show it in the FrameLayout onscreen
-            WebViewFragment wvf = WebViewFragment.newInstance( ((String[])message.obj)[0], ((String[])message.obj)[1]);
-
-            //I DONT KNOW WHERE TO PUT THIS LINE:
-            //urlBar.setText(wvf.url);
-
-            //add the new webView to fspa & update it
-            webViewList.add(wvf);
-            fspa.notifyDataSetChanged();
-            viewPager.setCurrentItem(fspa.getCount() - 1);
+            //create a new fragment if it doesn't exist already
+            if(fspa.getCount() == 0) {
+                WebViewFragment wvf = WebViewFragment.newInstance(((String[]) message.obj)[0], ((String[]) message.obj)[1]);
+                //add the new webView to fspa & update it
+                webViewList.add(wvf);
+                fspa.notifyDataSetChanged();
+                //make sure the viewPager is showing the right tab:
+                viewPager.setCurrentItem(fspa.getCount() - 1);
+            }
+            //else, fragment with a webView exists, so just load the new website into it
+            else {
+                ((WebViewFragment)fspa.getItem(viewPager.getCurrentItem())).webView.loadData(((String[]) message.obj)[0], "text/html", "UTF-8");
+            }
             return false;
         }
     });
