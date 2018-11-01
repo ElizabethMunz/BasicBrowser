@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     TextView urlBar;
     ViewPager viewPager;
     FragmentStatePagerAdapter fspa;
+    WebView webView;
 
     ArrayList<Fragment> webViewList;
 
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         forwardButton = findViewById(R.id.buttonForward);
         urlBar = findViewById(R.id.urlBar);
         viewPager = findViewById(R.id.viewPager);
+        webView = findViewById(R.id.webView);
 
         //initialize dynamic list to store the webpages for the fragmentstatepageradapter
         webViewList = new ArrayList<>();
@@ -54,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
             public Fragment getItem(int i) {
                 return webViewList.get(i);
             }
-
             @Override
             public int getCount() {
                 return webViewList.size();
@@ -68,29 +69,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d("Msg", "Go Button Clicked");
-                new Thread() {
-                    @Override
-                    public void run() {
-                        Log.d("Msg", "Thread Running");
-                        //read URL from user entry
-                        String urlText = urlBar.getText().toString();
-
-                        //make sure parseURL didn't return null
-                        if(parseURL(urlText) != null) {
-                            //put the URL's html data (returned by parseURL) into a string
-                            String urlContents = parseURL(urlText);
-                            //put the URL in a message object and send it to response handler
-                            Message msg = Message.obtain();
-                            String[] msgObjs = {urlContents, urlText};
-                            msg.obj = msgObjs;
-                            Log.d("trying to load", ((String[]) msg.obj)[0]);
-                            responseHandler.sendMessage(msg);
-                        }
-                    }
-                }.start();
+                loadSite();
             }
         });
 
+        /*TODO: THIS IMPLEMENTATION IS WRONG- this navigates between fragments, where each fragment should be a TAB
+            we need that implementation to be in the AppBar;
+            backButton and forwardButton need to save previous and current states of one FRAGMENT
+
+         */
+/*
         //go to previous page
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +95,17 @@ public class MainActivity extends AppCompatActivity {
                 //change the current view in the viewPager
                 viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
             }
+        });*/
+
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //change the current view in the viewPager
+                //webView.goBack();
+
+                viewPager.getCurrentItem()
+            }
         });
     }
 
@@ -116,7 +115,9 @@ public class MainActivity extends AppCompatActivity {
         public boolean handleMessage(Message message) {
             Log.d("msg", "handleMessage called successfully");
             //Create a new WebViewFragment for the site, and show it in the FrameLayout onscreen
-            WebViewFragment wvf = WebViewFragment.newInstance( ((String[])message.obj)[0], ((String[])message.obj)[1]);
+            WebViewFragment wvf = WebViewFragment.newInstance( ((Site)message.obj).html, ((Site)message.obj).url);
+            //TODO: only create newInstance if there's not already a fragment in this Tab
+            //
 
             //I DONT KNOW WHERE TO PUT THIS LINE:
             //urlBar.setText(wvf.url);
@@ -125,10 +126,16 @@ public class MainActivity extends AppCompatActivity {
             webViewList.add(wvf);
             fspa.notifyDataSetChanged();
             viewPager.setCurrentItem(fspa.getCount() - 1);
+
             return false;
         }
     });
 
+    /**
+     *
+     * @param urlText the string entered by the user in URL bar
+     * @return a string containing the full HTML text of the webpage
+     */
     public String parseURL(String urlText) {
         //find out if we can make this text into a url
         URL url = null;
@@ -159,6 +166,32 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return sb.toString();
+    }
+
+    /**
+     * called when user clicks Go or presses enter
+     */
+    public void loadSite() {
+        new Thread() {
+            @Override
+            public void run() {
+                Log.d("Msg", "Thread Running");
+                //read URL from user entry
+                String urlText = urlBar.getText().toString();
+                //make sure parseURL didn't return null
+                if(parseURL(urlText) != null) {
+                    //put the URL's html data (returned by parseURL) into a string
+                    String urlContents = parseURL(urlText);
+                    //put the URL in a message object and send it to response handler
+                    Message msg = Message.obtain();
+                    //String[] msgObjs = {urlContents, urlText};
+                    //msg.obj = msgObjs;
+                    msg.obj = new Site(urlContents, urlText);
+                    Log.d("trying to load", urlContents);
+                    responseHandler.sendMessage(msg);
+                }
+            }
+        }.start();
     }
 
 }
