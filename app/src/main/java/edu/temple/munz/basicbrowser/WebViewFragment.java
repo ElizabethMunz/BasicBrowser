@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 
 import java.net.URL;
 
@@ -19,17 +20,20 @@ import java.net.URL;
 public class WebViewFragment extends Fragment {
 
     WebView webView;
-    String url;
+    String html;
+    public String url;
 
+    public static final String HTML_KEY = "htmlkey";
     public static final String URL_KEY = "urlkey";
 
     public WebViewFragment() {
         // Required empty public constructor
     }
 
-    public static WebViewFragment newInstance(String url) {
+    public static WebViewFragment newInstance(String html, String url) {
         WebViewFragment wvf = new WebViewFragment();
         Bundle b = new Bundle();
+        b.putString(HTML_KEY, html);
         b.putString(URL_KEY, url);
         wvf.setArguments(b);
         return wvf;
@@ -43,6 +47,7 @@ public class WebViewFragment extends Fragment {
 
         //get arguments from the bundle created in newInstance
         if(getArguments() != null) {
+            html = getArguments().getString(HTML_KEY);
             url = getArguments().getString(URL_KEY);
         }
 
@@ -53,6 +58,12 @@ public class WebViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_web_view, container, false);
+
+        //set text in the URL bar to this site's URL- NVM GOTTA DO THIS IN MAINACTIVITY
+        //TextView t = getActivity().findViewById(R.id.urlBar);
+        //t.setText(url);
+
+
 
         //prepare webView
         webView = v.findViewById(R.id.webView);
@@ -65,7 +76,7 @@ public class WebViewFragment extends Fragment {
         });
 
         //load the site from the URL into the webView
-        webView.loadData((String)url, "text/html", "UTF-8");
+        webView.loadData((String)html, "text/html", "UTF-8");
         return v;
     }
 
