@@ -6,9 +6,11 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
@@ -21,15 +23,9 @@ import java.net.URL;
  */
 public class WebViewFragment extends Fragment {
 
-    //TODO: STORE REFERENCE TO CONTEXT PARENT IN ONATTACH METHOD!!!!!!!!!!!!
-
     Context parent;
-
     WebView webView;
-    //String html;
     public String url;
-
-    //public static final String HTML_KEY = "htmlkey";
     public static final String URL_KEY = "urlkey";
 
     public WebViewFragment() {
@@ -39,7 +35,6 @@ public class WebViewFragment extends Fragment {
     public static WebViewFragment newInstance(String url) {
         WebViewFragment wvf = new WebViewFragment();
         Bundle b = new Bundle();
-        //b.putString(HTML_KEY, html);
         b.putString(URL_KEY, url);
         wvf.setArguments(b);
         return wvf;
@@ -58,7 +53,6 @@ public class WebViewFragment extends Fragment {
 
         //get arguments from the bundle created in newInstance
         if(getArguments() != null) {
-           // html = getArguments().getString(HTML_KEY);
             url = getArguments().getString(URL_KEY);
         }
 
@@ -77,25 +71,24 @@ public class WebViewFragment extends Fragment {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
+                ((WebViewFragmentInterface)parent).webViewChange(url);
             }
 
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return false;
             }
         });
 
-
         //load the site from the URL into the webView
         webView.loadUrl(url);
-        //webView.loadData((String)html, "text/html", "UTF-8");
         return v;
     }
 
+
     //I need this for some reason
     interface WebViewFragmentInterface {
-        //put functions i'll define in MainActivity here?????
+        void webViewChange(String url);
 
     }
 

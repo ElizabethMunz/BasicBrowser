@@ -10,6 +10,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements WebViewFragment.W
 
 
     Button goButton, backButton, forwardButton;
-    TextView urlBar;
+    public TextView urlBar;
     ViewPager viewPager;
     FragmentStatePagerAdapter fspa;
 
@@ -116,7 +118,29 @@ public class MainActivity extends AppCompatActivity implements WebViewFragment.W
         });
     }
 
+    //display the appbar menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.browser_control, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch(id) {
+            case R.id.menuNew:
+                break;
+            case R.id.menuPrevTab:
+                break;
+            case R.id.menuNextTab:
+                break;
+        }
+
+        return super.onContextItemSelected(item);
+    }
 
     /**
      *
@@ -145,4 +169,8 @@ public class MainActivity extends AppCompatActivity implements WebViewFragment.W
         }
     }
 
+    @Override
+    public void webViewChange(String url) {
+        urlBar.setText(url);
+    }
 }
