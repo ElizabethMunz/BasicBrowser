@@ -8,44 +8,47 @@
 
     <Button
         android:id="@+id/buttonForward"
-        android:layout_width="60dp"
+        android:layout_width="32dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="16dp"
-        android:text="Fwd"
+        android:text="@string/buttonForward"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonBack"
-        android:layout_width="60dp"
+        android:layout_width="32dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginTop="16dp"
-        android:text="Back"
-        app:layout_constraintStart_toEndOf="@+id/buttonGo"
+        android:text="@string/buttonBack"
+        app:layout_constraintEnd_toStartOf="@+id/buttonForward"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonGo"
         android:layout_width="44dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/buttonGo"
-        app:layout_constraintStart_toEndOf="@+id/urlBar"
+        app:layout_constraintEnd_toStartOf="@+id/buttonBack"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/urlBar"
-        android:layout_width="157dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="URL"
         android:inputType="textWebEditText"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="8dp" />
+        app:layout_constraintEnd_toStartOf="@+id/buttonGo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"
