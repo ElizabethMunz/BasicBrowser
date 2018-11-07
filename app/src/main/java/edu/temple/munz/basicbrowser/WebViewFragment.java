@@ -67,7 +67,6 @@ public class WebViewFragment extends Fragment {
         //prepare webView
         webView = v.findViewById(R.id.webView);
         webView.setWebViewClient(new WebViewClient() {
-
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
@@ -77,6 +76,12 @@ public class WebViewFragment extends Fragment {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return false;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                ((WebViewFragmentInterface)parent).webViewChange(url);
             }
         });
 
@@ -89,7 +94,6 @@ public class WebViewFragment extends Fragment {
     //I need this for some reason
     interface WebViewFragmentInterface {
         void webViewChange(String url);
-
     }
 
 }
