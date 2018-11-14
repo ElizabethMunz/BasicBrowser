@@ -79,6 +79,20 @@ public class MainActivity extends AppCompatActivity implements WebViewFragment.W
         });
 
 
+        //LAB 8: INTENT TIME
+        if(getIntent().getData() != null) {
+            String url = getIntent().getData().toString();
+            Log.d("Intent received", url);
+            //create a new WebViewFragment (a new tab) for the received intent
+            WebViewFragment wvf = WebViewFragment.newInstance(url);
+            //add the new webView to fspa & update it
+            webViewList.add(wvf);
+            fspa.notifyDataSetChanged();
+            //make sure the viewPager is showing the right tab:
+            viewPager.setCurrentItem(webViewList.size() -1);
+            Log.d("Current fragment", viewPager.getCurrentItem() + "");
+        }
+
         //Go button listener
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,6 +144,9 @@ public class MainActivity extends AppCompatActivity implements WebViewFragment.W
                 }
             }
         });
+
+
+
     }
 
     //display the appbar menu
@@ -161,11 +178,9 @@ public class MainActivity extends AppCompatActivity implements WebViewFragment.W
                 webViewChange("");
                 break;
             case R.id.menuPrevTab:
-                //TODO: FIX THIS FIGURE OUT WHY GETCURRENTITEM ISN'T ALWAYS GETTING THE RIGHT URL???????
                 viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
                 Log.d("Current fragment:", viewPager.getCurrentItem() + "");
-                webViewChange(((WebViewFragment)fspa.getItem(viewPager.getCurrentItem())).webView.getUrl()); //WHY DOES THIS SOMETIMES GIVE THE WRONG URL
-                //WHY
+                webViewChange(((WebViewFragment)fspa.getItem(viewPager.getCurrentItem())).webView.getUrl());
                 break;
             case R.id.menuNextTab:
                 viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
